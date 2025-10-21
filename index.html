@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blasphemous II</title>
+    <link href="https://fonts.googleapis.com/css2?family=Aleo:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Aleo', serif;
+            color: #fff;
+            overflow-x: hidden;
+            background: #000;
+        }
+
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.8) 100%);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            border-bottom: 3px solid #E1B37F;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+        }
+
+        .nav-toggle-checkbox {
+            display: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 50px;
+        }
+
+        .nav-menu li {
+            position: relative;
+        }
+
+        .nav-menu li::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -15px;
+            width: 8px;
+            height: 8px;
+            background: #E1B37F;
+            border-radius: 50%;
+            transform: translateY(-50%) scale(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-menu li:hover::before {
+            transform: translateY(-50%) scale(1);
+        }
+
+        .nav-menu li a {
+            color: #d4d4d4;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 12px 20px;
+            transition: all 0.4s ease;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-menu li a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(225, 179, 127, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-menu li a:hover::before {
+            left: 100%;
+        }
+
+        .nav-menu li a:hover {
+            color: #E1B37F;
+            background: rgba(225, 179, 127, 0.1);
+            transform: translateY(-3px);
+            text-shadow: 0 0 10px rgba(225, 179, 127, 0.5);
+            box-shadow: 0 8px 25px rgba(225, 179, 127, 0.3);
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            position: relative;
+        }
+
+        .nav-toggle:hover {
+            background: rgba(225, 179, 127, 0.1);
+        }
+
+        .nav-toggle span {
+            width: 30px;
+            height: 4px;
+            background: linear-gradient(90deg, #E1B37F, #f4d03f);
+            border-radius: 3px;
+            transition: all 0.4s ease;
+            box-shadow: 0 2px 5px rgba(225, 179, 127, 0.3);
+        }
+
+        /* Checkbox animation for hamburger */
+        .nav-toggle-checkbox:checked + .nav-toggle span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .nav-toggle-checkbox:checked + .nav-toggle span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .nav-toggle-checkbox:checked + .nav-toggle span:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('./img/frontimg.png');
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            padding-top: 80px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo img {
+            max-width: 500px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.8));
+        }
+
+        .buy-btn {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.6);
+        }
+
+        /* Decorative border */
+        .decorative-border {
+            height: 30px;
+            background-color: #000;
+            border-top: 3px solid #E1B37F;
+            border-bottom: 3px solid #E1B37F;
+        }
+
+        /* World in Ruins Section */
+        .ruins-section {
+            background: url('./img/fone.png'), linear-gradient(180deg, #2c1810 0%, #1a0f08 100%);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .ruins-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .flux-content,
+        .why-play-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .ruins-title {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            color: #E1B37F;
+            margin-bottom: 50px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .ruins-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .ruins-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #d4d4d4;
+            text-align: justify;
+        }
+
+        /* What is Flux Section */
+        .flux-section {
+            background: url('./img/fone.png'), linear-gradient(180deg, #1a0f08 0%, #0d0805 100%);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .flux-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1;
+        }
+
+        .flux-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .flux-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #E1B37F;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .flux-description {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #d4d4d4;
+            margin-bottom: 30px;
+        }
+
+        .flux-features {
+            list-style: none;
+        }
+
+        .flux-features li {
+            font-size: 1rem;
+            color: #c4c4c4;
+            margin-bottom: 15px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .flux-features li::before {
+            content: '⚔';
+            position: absolute;
+            left: 0;
+            color: #E1B37F;
+            font-size: 1.2rem;
+        }
+
+        .flux-image {
+            position: relative;
+            border: 3px solid #E1B37F;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(244, 208, 63, 0.3);
+        }
+
+        .flux-image img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .flux-image:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Why Play Flux Section */
+        .why-play-section {
+            background: url('./img/fone.png'), linear-gradient(180deg, #0d0805 0%, #1a0f08 100%);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .why-play-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1;
+        }
+
+        .why-play-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .why-play-image {
+            position: relative;
+            border: 3px solid #e74c3c;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3);
+        }
+
+        .why-play-image img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .why-play-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .why-play-text {
+            color: #d4d4d4;
+        }
+
+        .why-play-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #E1B37F;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .why-play-description {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .why-play-features {
+            list-style: none;
+        }
+
+        .why-play-features li {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .why-play-features li::before {
+            content: '🗡';
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+
+        /* Enter the Flux Section */
+        .enter-flux-section {
+            background: url('./img/fone.png'), linear-gradient(180deg, #1a0f08 0%, #2c1810 100%);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .enter-flux-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1;
+        }
+
+        .enter-flux-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #E1B37F;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 2;
+        }
+
+        .enter-flux-description {
+            font-size: 1.2rem;
+            color: #d4d4d4;
+            max-width: 600px;
+            margin: 0 auto 50px;
+            line-height: 1.7;
+            position: relative;
+            z-index: 2;
+        }
+
+        .enter-flux-image {
+            max-width: 600px;
+            margin: 0 auto;
+            border: 3px solid #E1B37F;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(244, 208, 63, 0.4);
+            position: relative;
+            z-index: 2;
+        }
+
+        .enter-flux-image img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .enter-flux-image:hover img {
+            transform: scale(1.03);
+        }
+
+        /* Gallery Section */
+        .gallery-section {
+            background: #252525;
+            padding: 80px 0;
+        }
+
+        .gallery-title {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            color: #E1B37F;
+            margin-bottom: 60px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Video Background Section */
+        .video-bg-section {
+            position: relative;
+            height: 70vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-background {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        .video-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
+
+        .video-title {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #E1B37F;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.9);
+            margin-bottom: 20px;
+        }
+
+        .video-subtitle {
+            font-size: 1.5rem;
+            color: #d4d4d4;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Golden Divider */
+        .golden-divider {
+            height: 60px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                #E1B37F 20%, 
+                #f4d03f 50%, 
+                #E1B37F 80%, 
+                transparent 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .golden-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -100%;
+            width: 200%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            animation: shimmer 3s infinite;
+            transform: translateY(-50%);
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .golden-divider-ornate {
+            height: 80px;
+            background: #000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .golden-divider-ornate::before {
+            content: '◆ ◆ ◆ ◆ ◆';
+            color: #E1B37F;
+            font-size: 2rem;
+            text-shadow: 0 0 10px rgba(225, 179, 127, 0.8);
+            letter-spacing: 2rem;
+        }
+
+        .golden-divider-ornate::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(225, 179, 127, 0.1) 25%, 
+                rgba(225, 179, 127, 0.3) 50%, 
+                rgba(225, 179, 127, 0.1) 75%, 
+                transparent 100%);
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            background: linear-gradient(180deg, #2c2c2c 0%, #1a1a1a 100%);
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .pricing-title {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            color: #E1B37F;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .pricing-subtitle {
+            font-size: 1.2rem;
+            color: #d4d4d4;
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(225, 179, 127, 0.3);
+        }
+
+        .pricing-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+
+        .pricing-home-link {
+            text-align: right;
+            margin-top: 40px;
+            padding-right: 20px;
+        }
+
+        .pricing-home-link span {
+            color: #E1B37F;
+            font-size: 1.1rem;
+            font-weight: 400;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .pricing-home-link span:hover {
+            color: #f4d03f;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: #1a1a1a;
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .contact-title {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            color: #E1B37F;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .contact-subtitle {
+            font-size: 1.1rem;
+            color: #d4d4d4;
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .contact-form {
+            max-width: 500px;
+            margin: 0 auto 50px;
+            padding: 0 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            background: #2a2a2a;
+            border: 2px solid #444;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Aleo', serif;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #888;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #E1B37F;
+            color: #2c1810;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            margin-bottom: 40px;
+        }
+
+        .submit-btn:hover {
+            background: #c0964d;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(225, 179, 127, 0.4);
+        }
+
+        .social-contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .social-contact-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: #333;
+            border-radius: 50%;
+            color: #E1B37F;
+            font-size: 1.5rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid #444;
+        }
+
+        .social-contact-link:hover {
+            background: #E1B37F;
+            color: #2c1810;
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(225, 179, 127, 0.4);
+        }
+
+        /* Footer */
+        .footer {
+            background: #000;
+            padding: 60px 0 40px;
+            text-align: center;
+            border-top: 3px solid #E1B37F;
+        }
+
+        .footer-quote {
+            font-size: 1.3rem;
+            font-style: italic;
+            color: #E1B37F;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: #f4d03f;
+            border-radius: 50%;
+            color: #2c1810;
+            font-size: 1.5rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 10px 20px rgba(244, 208, 63, 0.5);
+        }
+
+        .platforms {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .platform {
+            color: #ccc;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .platform:hover {
+            color: #E1B37F;
+        }
+
+        .copyright {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                height: 70px;
+                justify-content: space-between;
+            }
+
+            .nav-toggle {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: linear-gradient(180deg, rgba(0, 0, 0, 0.98) 0%, rgba(26, 15, 8, 0.95) 100%);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                padding-top: 80px;
+                gap: 40px;
+                transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                border-right: 3px solid #E1B37F;
+            }
+
+            .nav-menu::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: url('./img/fone.png');
+                background-size: cover;
+                background-position: center;
+                opacity: 0.1;
+                z-index: -1;
+            }
+
+            /* Show menu when checkbox is checked */
+            .nav-toggle-checkbox:checked ~ .nav-menu {
+                left: 0;
+            }
+
+            .nav-menu li::before {
+                display: none;
+            }
+
+            .nav-menu li a {
+                font-size: 1.4rem;
+                padding: 20px 30px;
+                border: 2px solid transparent;
+                border-radius: 12px;
+                background: rgba(225, 179, 127, 0.05);
+                backdrop-filter: blur(10px);
+                min-width: 250px;
+                text-align: center;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            }
+
+            .nav-menu li a:hover {
+                border-color: #E1B37F;
+                background: rgba(225, 179, 127, 0.15);
+                transform: translateY(-5px) scale(1.05);
+            }
+
+            /* Close menu when clicking on a link */
+            .nav-menu li a {
+                position: relative;
+            }
+
+            .nav-menu li a::after {
+                content: '';
+                position: absolute;
+                top: -20px;
+                right: -20px;
+                bottom: -20px;
+                left: -20px;
+            }
+
+            .hero {
+                padding-top: 70px;
+            }
+
+            .logo img {
+                max-width: 300px;
+            }
+            
+            .ruins-content,
+            .flux-content,
+            .why-play-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .ruins-title,
+            .flux-title,
+            .why-play-title,
+            .enter-flux-title,
+            .gallery-title {
+                font-size: 2rem;
+            }
+            
+            .video-title {
+                font-size: 2.5rem;
+            }
+            
+            .video-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .video-bg-section {
+                height: 50vh;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+            
+            .social-links {
+                gap: 20px;
+            }
+            
+            .platforms {
+                gap: 20px;
+            }
+
+            .golden-divider-ornate::before {
+                font-size: 1.5rem;
+                letter-spacing: 1rem;
+            }
+
+            .pricing-title {
+                font-size: 2rem;
+            }
+
+            .pricing-subtitle {
+                font-size: 1rem;
+                margin-bottom: 40px;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .pricing-image {
+                max-width: 300px;
+                margin: 0 auto;
+                display: block;
+            }
+
+            .contact-title {
+                font-size: 2rem;
+            }
+
+            .contact-subtitle {
+                font-size: 1rem;
+                margin-bottom: 40px;
+            }
+
+            .social-contact-links {
+                gap: 20px;
+            }
+
+            .social-contact-link {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Menu -->
+    <nav class="navigation">
+        <div class="nav-container">
+            <input type="checkbox" id="nav-toggle" class="nav-toggle-checkbox">
+            <label for="nav-toggle" class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            <ul class="nav-menu">
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#gallery">The Gallery</a></li>
+                <li><a href="#video">The Miracle Awaits</a></li>
+                <li><a href="#pricing">Take Your Plan</a></li>
+                <li><a href="#contact">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="logo">
+                <img src="./img/Blasphemous II.png" alt="Blasphemous II">
+            </h1>
+            <button class="buy-btn">Buy Now</button>
+        </div>
+    </section>
+
+    <div class="decorative-border"></div>
+
+    <!-- A World in Ruins Section -->
+    <section id="about" class="ruins-section">
+        <div class="container">
+            <h2 class="ruins-title">— A World in Ruins —</h2>
+            <div class="ruins-content">
+                <div class="ruins-text">
+                    <p>In a land where shadows whisper and ancient flames flicker, the balance between chaos and order has long been broken. The kingdoms that once stood proud have crumbled into dust, their banners torn and their thrones reduced to ruins. The sun itself hides behind a veil of smoke and ash, casting the world into a twilight that never ends.</p>
+                    <br>
+                    <p>Flux is not just a game — it is a journey. You will walk through forgotten kingdoms where silence screams louder than war drums, through cursed landscapes where every stone remembers the blood it has soaked, through forests where the trees themselves conspire against those who wander too deep.</p>
+                    <br>
+                    <p>This is a realm built on the ashes of gods who once ruled. Their monuments lie shattered, their names spoken only in fear. Yet their power lingers, waiting to be claimed by those bold—or foolish—enough to seek it.</p>
+                    <br>
+                    <p>In Flux, every step you take is more than survival. It is a choice that bends reality. The land itself is alive, twisted by remnants of ancient sorcery and the despair of countless souls. The question is not whether you will endure—but what you will become in the end.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What is Flux Section -->
+    <section class="flux-section">
+        <div class="container">
+            <div class="flux-content">
+                <div class="flux-image">
+                    <img src="./img/What is Flux.jpg" alt="Flux Gameplay">
+                </div>
+                <div class="flux-text">
+                    <h2 class="flux-title">What is Flux?</h2>
+                    <p class="flux-description">Flux is a dark fantasy indie game where every choice you make shifts the world around you. The realm bends and reshapes itself depending on your actions, creating a living, breathing story.</p>
+                    <ul class="flux-features">
+                        <li>Dynamic World: Your decisions alter the fate of kingdoms.</li>
+                        <li>Moral Dilemmas: Light or darkness, neither is pure.</li>
+                        <li>Immersive Atmosphere: Hand-crafted environments drenched in despair and beauty.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Play Flux Section -->
+    <section class="why-play-section">
+        <div class="container">
+            <div class="why-play-content">
+                <div class="why-play-text">
+                    <h2 class="why-play-title">Why Play Flux?</h2>
+                    <p class="why-play-description">This is not a game for the faint of heart. Flux challenges you to survive not only against the monsters lurking in the dark but against the shadows within your own soul.</p>
+                    <ul class="why-play-features">
+                        <li>Become a hero… or a tyrant.</li>
+                        <li>Shape your own legend in a world doomed to collapse.</li>
+                        <li>Uncover secrets buried in ruins and blood.</li>
+                    </ul>
+                </div>
+                <div class="why-play-image">
+                    <img src="./img/Why Play Flux.jfif" alt="Character Artwork">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enter the Flux Section -->
+    <section class="enter-flux-section">
+        <div class="container">
+            <h2 class="enter-flux-title">Enter the Flux</h2>
+            <p class="enter-flux-description">The world awaits those who dare to step into the shifting void. Will you embrace the chaos… or forge your own order?</p>
+            <div class="enter-flux-image">
+                <img src="./img/Enter the Flux Section.png" alt="Enter the Flux">
+            </div>
+        </div>
+    </section>
+
+    <div class="decorative-border"></div>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery-section">
+        <div class="container">
+            <h2 class="gallery-title">The Gallery</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="./img/1.jfif" alt="Game Screenshot 1">
+                </div>
+                <div class="gallery-item">
+                    <img src="./img/2.jfif" alt="Game Screenshot 2">
+                </div>
+                <div class="gallery-item">
+                    <img src="./img/3.jfif" alt="Game Screenshot 3">
+                </div>
+                <div class="gallery-item">
+                    <img src="./img/4.jfif" alt="Game Screenshot 4">
+                </div>
+                <div class="gallery-item">
+                    <img src="./img/5.jfif" alt="Game Screenshot 5">
+                </div>
+                <div class="gallery-item">
+                    <img src="./img/6.jfif" alt="Game Screenshot 6">
+                </div>
+                <div class="gallery-item">
+                    <img src="./img/7.jfif" alt="Game Screenshot 7">
+                </div>
+                <div class="gallery-item">
+                    <img src="./img/8.jfif" alt="Game Screenshot 8">
+                </div>
+                <div class="gallery-item">
+                    <img src="./img/9.jfif" alt="Game Screenshot 9">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Golden Divider -->
+    <div class="golden-divider"></div>
+
+    <!-- Video Background Section -->
+    <section id="video" class="video-bg-section">
+        <video class="video-background" autoplay muted loop>
+            <source src="./img/Blasphemous Edit.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+        <div class="video-content">
+            <h2 class="video-title">The Miracle Awaits</h2>
+            <p class="video-subtitle">Step into a world where penance becomes power, where every prayer is written in blood</p>
+        </div>
+    </section>
+
+    <!-- Ornate Golden Divider -->
+    <div class="golden-divider-ornate"></div>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing-section">
+        <div class="container">
+            <h2 class="pricing-title">Take Your Plan</h2>
+            <p class="pricing-subtitle">Choose your burden. Each plan is a vow — and every vow comes with a price</p>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <img src="./img/base game.png" alt="Base Game" class="pricing-image">
+                </div>
+                <div class="pricing-card">
+                    <img src="./img/The Crimson Oath.png" alt="The Crimson Oath" class="pricing-image">
+                </div>
+                <div class="pricing-card">
+                    <img src="./img/Complete Edition.png" alt="Complete Edition" class="pricing-image">
+                </div>
+            </div>
+            <div class="pricing-home-link">
+                <span>TO HOME PAGE...</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="contact-title">Contact Us</h2>
+            <p class="contact-subtitle">Leave your mark upon the pilgrimage. Share your thoughts, questions or requests below — and we shall answer.</p>
+            <form class="contact-form">
+                <div class="form-group">
+                    <input type="text" id="name" name="name" placeholder="Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" id="year" name="year" placeholder="Years" min="1900" max="2024">
+                </div>
+                <div class="form-group">
+                    <textarea id="message" name="message" placeholder="Message" rows="6" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+            <div class="social-contact-links">
+                <a href="#" class="social-contact-link">
+                    <span>f</span>
+                </a>
+                <a href="#" class="social-contact-link">
+                    <span>📷</span>
+                </a>
+                <a href="#" class="social-contact-link">
+                    <span>X</span>
+                </a>
+                <a href="#" class="social-contact-link">
+                    <span>💬</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-quote">Blasphemous II, penance never ends. Every victory is written in blood, every failure echoes for eternity. The question is not whether you will survive, but how much of your soul will remain when the pilgrimage is over.</p>
+            
+            <div class="social-links">
+                <a href="#" class="social-link">f</a>
+                <a href="#" class="social-link">@</a>
+                <a href="#" class="social-link">X</a>
+                <a href="#" class="social-link">◉</a>
+            </div>
+            
+            <div class="platforms">
+                <span class="platform">Steam</span>
+                <span class="platform">PlayStation</span>
+                <span class="platform">Xbox</span>
+                <span class="platform">Nintendo Switch</span>
+            </div>
+            
+            <p class="copyright">© 2024 Blasphemous II. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
+</body>
+</html>
